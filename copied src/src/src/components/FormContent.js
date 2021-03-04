@@ -13,14 +13,9 @@ import {makeStyles} from '@material-ui/core/styles';
 import withStyles from '@material-ui/styles/withStyles';
 import Assessment from './Assessment';
 import InputTable from './InputTable';
-import TableContent from './TableContent';
 import {Button} from '@material-ui/core';
 import { connect } from 'react-redux';
-import {addFeedback, initialSetup, saveFeedback} from '../actions/skillAction';
-import { PDFDownloadLink, PDFViewer } from "@react-pdf/renderer";
-import MyDocument from './PDF/PDF';
-import { Page, Text, View, Document, StyleSheet } from '@react-pdf/renderer';
-import PDFLink from './PDF/PDFLink';
+import {addFeedback, initialSetup} from '../actions/skillAction';
 
 const styles = (theme) => ({
   root: {
@@ -40,7 +35,6 @@ const oSkills = {
 const FormContent = (props) => {
   const [skillsList, setSkillsList] = useState({});
   const [subSkillCheckBoxlist, setSubSkillCheckBoxlist] = useState({});
-  const [isPDFVisible, SetIsPDFVisible] = useState(false);
 
   useEffect(() => {
     props.initialSetup(props.Skills);
@@ -135,60 +129,29 @@ const FormContent = (props) => {
                 {skill.subSkill ? subSkillsContent(skill) : ''}
               </FormGroup>
             </div>
-            <TableContent
+            <InputTable
               value={skill.value}
             //   rows={props.rows}
             // rows={feedBackItems}
               handleChange={handleChange}
               handleAddRow={handleAddRow}
-            ></TableContent>
+            ></InputTable>
           </ExpansionPanelDetails>
         </ExpansionPanel>
       );
     });
   };
 
-  const handleDownloadPDF = () => {
-    // return (<PDFDownloadLink
-    //     document={<PdfDocument />}
-    //     fileName="FeebackForm.pdf"
-    //     style={{
-    //       textDecoration: "none",
-    //       padding: "10px",
-    //       color: "#4a4a4a",
-    //       backgroundColor: "#f2f2f2",
-    //       border: "1px solid #4a4a4a"
-    //     }}
-    //   >
-    //     {/* {({ blob, url, loading, error }) =>
-    //       loading ? "Loading document..." : "Download Pdf"
-    //     } */}
-    //   </PDFDownloadLink>
-    // );
-    return (
-      <PDFViewer>
-        {/* <MyDocument></MyDocument> */}
-        <Document>
-    <Page >
-      <View >
-        <Text>Section #1</Text>
-      </View>
-      <View >
-        <Text>Section #2</Text>
-      </View>
-    </Page>
-  </Document>
-      </PDFViewer>
-    )
-  }
   const handleSubmit = () => {
-    SetIsPDFVisible(true);
-      props.saveFeedback(subSkillCheckBoxlist);
+      const report = {
+          checkbox: [...setSubSkillCheckBoxlist.checkbox],
+          feedback: [...setSkillsList.feedback]
+      }
   }
   return (
   <>
   {expansionTabContent()}
-  <div style={{paddingTop:'20px', align:"right"}}>
+  <div style={{paddingTop:'20px'}}>
         <Button
           variant="contained"
           color="primary"
@@ -196,17 +159,13 @@ const FormContent = (props) => {
         >
           Submit
         </Button>
-        {isPDFVisible &&
-          <PDFLink></PDFLink>
-        } 
-        {/* <Button
+        <Button
           variant="contained"
           color="primary"
-          onClick={() => handleDownloadPDF()}
+          //   onClick={() => handleAddRow(value)}
         >
           PDF
-        </Button> */}
-
+        </Button>
       </div>
   </>);
 };
@@ -217,4 +176,4 @@ const mapStateToProps = (state) => {
         rows: state.skillReducer.rows
     }
 }
-export default connect(mapStateToProps, {addFeedback, initialSetup, saveFeedback})(withStyles(styles)(FormContent));
+export default connect(mapStateToProps, {addFeedback, initialSetup})(withStyles(styles)(FormContent));

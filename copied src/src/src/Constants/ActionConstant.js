@@ -1,0 +1,2 @@
+export const ADD_FEEDBACK = 'ADD_FEEDBACK';
+export const INITIAL_SETUP = 'INITIAL_SETUP';
